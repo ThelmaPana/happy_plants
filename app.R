@@ -2,7 +2,7 @@ library(shiny)
 library(tidyverse)
 library(lubridate)
 
-source("my_gs4_auth.R")
+source("gs4_auth.R")
 
 ## Read data ----
 gs <- "" # your google sheet link goes here
