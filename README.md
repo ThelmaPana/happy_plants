@@ -29,7 +29,7 @@ Check the plants you’ve watered or fed and click on `Done` to save.
 
 You may add any other columns for extra info. 
 
-2. Set up non interactive authentification following in `gs4_auth.R` (see https://medium.com/@JosiahParry/googlesheets4-authentication-for-deployment-9e994b4c81d6).
+2. Set up non interactive authentification in `gs4_auth.R` (see https://medium.com/@JosiahParry/googlesheets4-authentication-for-deployment-9e994b4c81d6).
 
 3. Paste your spreadsheet URL in the `app.R` script
 
