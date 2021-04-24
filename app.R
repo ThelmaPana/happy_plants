@@ -66,73 +66,83 @@ ui <- fluidPage(
                          selected = room_choices)
     ),
     
-    # Overdue plants
+    
     mainPanel(
+      
+      fluidRow(
+      # Overdue plants
       h2("Overdue Plants"),
-      
-      h3("Thursty"),
-      checkboxGroupInput(
-        "to_water_past", 
-        "",
-        choices = plants$name
+      column(6,
+             h3("Thursty"),
+             checkboxGroupInput(
+               "to_water_past", 
+               "",
+               choices = plants$name
+             )
       ),
+      column(6,
+             h3("Hungry"),
+             checkboxGroupInput(
+               "to_feed_past", 
+               "",
+               choices = plants$name
+             )
+      ),
+    ),
+    
+      br(),
+    
+    fluidRow(
+      # Todays plants
+      h2("Today’s Plants"),
+      column(6,
+             h3("Thursty"),
+             checkboxGroupInput(
+               "to_water_today", 
+               "",
+               choices = plants$name
+             )
+      ),
+      column(6,
+             h3("Hungry"),
+             checkboxGroupInput(
+               "to_feed_today", 
+               "",
+               choices = plants$name
+             )
+      ),
+    ),
       
       br(),
-      
-      h3("Hungry"),
-      checkboxGroupInput(
-        "to_feed_past", 
-        "",
-        choices = plants$name
-      ),
-      
-      br(),
-      
-      # Today plants
-      h2("Today's Plants"),
-      
-      h3("Thursty"),
-      checkboxGroupInput(
-        "to_water_today", 
-        "",
-        choices = plants$name
-      ),
-      
-      br(),
-      
-      h3("Hungry"),
-      checkboxGroupInput(
-        "to_feed_today", 
-        "",
-        choices = plants$name
-      ),
-      
-      br(),
-      
+    
+    fluidRow(
       # Coming days plants
       h2("Coming soon"),
-      
-      h3("Thursty"),
-      checkboxGroupInput(
-        "to_water_future", 
-        "",
-        choices = plants$name
+      column(6,
+             h3("Thursty"),
+             checkboxGroupInput(
+               "to_water_future", 
+               "",
+               choices = plants$name
+             )
       ),
-      
-      br(),
-      
-      h3("Hungry"),
-      checkboxGroupInput(
-        "to_feed_future", 
-        "",
-        choices = plants$name
+      column(6,
+             h3("Hungry"),
+             checkboxGroupInput(
+               "to_feed_future", 
+               "",
+               choices = plants$name
+             )
       ),
+    ),
       
-      br(),
+    br(),
       
-      actionButton("done", "Done"),
+    actionButton("done", "Done"),
       
-      br(),
+    br(),
+    br(),
+    br(),
     )
   )
   
@@ -177,17 +187,17 @@ server <- function(input, output, session) {
   )
   
   # Plants overdue for water
-  over_water <- reactive(df() %>% filter(water_next < today()) %>% pull(name))
+  over_water <- reactive(df() %>% filter(water_next < today()) %>% pull(name) %>% sort())
   # Plants overdue for food
-  over_food <- reactive(df() %>% filter(food_next < today()) %>% pull(name))
+  over_food <- reactive(df() %>% filter(food_next < today()) %>% pull(name) %>% sort())
   # Plants to water today
-  today_water <- reactive(df() %>% filter(water_next == today()) %>% pull(name))
+  today_water <- reactive(df() %>% filter(water_next == today()) %>% pull(name) %>% sort())
   # Plants to feed today
-  today_food <- reactive(df() %>% filter(food_next == today()) %>% pull(name))
+  today_food <- reactive(df() %>% filter(food_next == today()) %>% pull(name) %>% sort())
   # Plants to water in the 3 coming days
-  future_water <- reactive(df() %>% filter(between(water_next, today() + days(1), today() + days(3))) %>% pull(name))
+  future_water <- reactive(df() %>% filter(between(water_next, today() + days(1), today() + days(3))) %>% pull(name) %>% sort())
   # Plants to feed in the 3 coming days
-  future_food <- reactive(df() %>% filter(between(food_next, today() + days(1), today() + days(3))) %>% pull(name))
+  future_food <- reactive(df() %>% filter(between(food_next, today() + days(1), today() + days(3))) %>% pull(name) %>% sort())
   
   # Update check boxes according to season and room
   observe({
