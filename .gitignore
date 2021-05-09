@@ -1,5 +1,6 @@
 .Rhistory
 .Rproj.user
+.RData
 .DS_Store
 rsconnect/*
 .secrets

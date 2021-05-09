@@ -23,11 +23,6 @@ plants_raw <- read_sheet(
     fed_last = date(fed_last)
   )
 
-#plants_raw <- read_csv(
-#  "plants.csv", skip = 2, na = c("", "NA", "/"),
-#  col_names = read_csv("plants.csv") %>% colnames()
-#  ) 
-
 # Select relevant columns
 plants <- plants_raw %>% 
   select(
@@ -69,6 +64,7 @@ ui <- fluidPage(
     
     mainPanel(
       
+      
       fluidRow(
       # Overdue plants
       h2("Overdue Plants"),
@@ -77,7 +73,7 @@ ui <- fluidPage(
              checkboxGroupInput(
                "to_water_past", 
                "",
-               choices = plants$name
+               choices = plants$name %>% sort()
              )
       ),
       column(6,
@@ -182,10 +178,6 @@ server <- function(input, output, session) {
     }
   )
   
-  foo <- reactive(
-    df() %>% filter(water_next < today())
-  )
-  
   # Plants overdue for water
   over_water <- reactive(df() %>% filter(water_next < today()) %>% pull(name) %>% sort())
   # Plants overdue for food
@@ -206,7 +198,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_water_past",
       # label = paste("To Water"),
-      choices = over_water(),
+      choices = setdiff(over_water(), over_food()), # do not show plants to feed
       selected = s_w_over
     )
     
@@ -215,7 +207,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_feed_past",
       # label = paste("To Feed"),
-      choices = over_food(),
+      choices = intersect(over_food(), over_water()), # show only plants which also need water
       selected = s_f_over
     )
     
@@ -224,7 +216,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_water_today",
       # label = paste("To Water"),
-      choices = today_water(),
+      choices = setdiff(today_water(), today_food()), # do not show plants to feed
       selected = s_w_today
     )
     
@@ -233,7 +225,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_feed_today",
       # label = paste("To Feed"),
-      choices = today_food(),
+      choices = intersect(today_food(), today_water()), # show only plants which also need water
       selected = s_f_today
     )
     
@@ -242,7 +234,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_water_future",
       # label = paste("To Water"),
-      choices = future_water(),
+      choices = setdiff(future_water(), future_food()), # do not show plants to feed
       selected = s_w_future
     )
     
@@ -251,7 +243,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_feed_future",
       # label = paste("To Feed"),
-      choices = future_food(),
+      choices = intersect(future_food(), future_water()), # show only plants which also need water
       selected = s_f_future
     )
   })
@@ -259,8 +251,8 @@ server <- function(input, output, session) {
   # Save when "done" button is clicked
   observeEvent(input$done,{
     # Get names of selected plants
-    watered <- c(input$to_water_past, input$to_water_today, input$to_water_future)
     fed <- c(input$to_feed_past, input$to_feed_today, input$to_feed_future)
+    watered <- c(input$to_water_past, input$to_water_today, input$to_water_future, fed) # add fed plants to watered plants
     
     # If no plant was watered or fed, close the app without writing in spreadsheet
     if (length(watered) + length(fed) == 0){

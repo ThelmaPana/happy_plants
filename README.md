@@ -10,6 +10,8 @@ Plants in need of food or water are displayed in three lists:
 - `today’s plants` plants which need care today
 - `coming soon` plants which will need care in the three coming days
 
+*Plants shown as "to fed" are also to be watered even though they are not displayed as "to water".*
+
 Check the plants you’ve watered or fed and click on `Done` to save.
 
 ## Getting started
