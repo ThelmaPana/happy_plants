@@ -31,7 +31,10 @@ plants <- plants_raw %>%
     water_freq_summer, water_freq_winter, water_freq_mid, # watering frequencies
     food_freq_summer, food_freq_winter, food_freq_mid, # feeding frequencies
   ) %>% 
-  filter(!is.na(watered_last) & !is.na(fed_last))  # ignore plants for which last watering or feeding day is NA
+  # ignore all plants below an empty line for last date of watering or feeding
+  mutate(keep = cumsum(is.na(watered_last) | is.na(fed_last))) %>% 
+  filter(keep == 0) %>% 
+  select(-keep)
 
 
 # Make a list of rooms
