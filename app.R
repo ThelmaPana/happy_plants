@@ -41,7 +41,17 @@ plants <- plants_raw %>%
 room_choices <- plants_raw %>% pull(room) %>% unique() %>% sort()
 
 # Make an educated guess for preselected season in northern hemisphere
-season_pred <- c("winter", "mid", "summer", "mid")[quarter(today())]
+season_names <- c("winter", "mid", "summer", "mid") # names of seasons
+
+season_dates <-c( # end date of seasons in julian day
+  yday(ymd('2020-03-20')), # end of winter
+  yday(ymd('2020-06-21')), # end of spring
+  yday(ymd('2020-09-22')), # end of summer
+  yday(ymd('2020-12-21'))  # end of automn
+  )
+
+# find which season matches today in julian day
+season_pred <- season_names[max(which(yday(today()) > season_dates)) + 1]
 
 
 ## UI ----
