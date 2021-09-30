@@ -71,7 +71,11 @@ ui <- fluidPage(
       checkboxGroupInput("rooms", 
                          h3("Rooms"), 
                          choices = room_choices,
-                         selected = room_choices)
+                         selected = room_choices),
+      
+      dateInput("date", 
+                h3("Date"), 
+                value = today())
     ),
     
     
@@ -275,9 +279,9 @@ server <- function(input, output, session) {
     # Update dates of last watering and feeding of selected plants
     plants_raw <- plants_raw %>% 
       mutate(
-        watered_last = ifelse(name %in% watered, today(), watered_last),
+        watered_last = ifelse(name %in% watered, input$date, watered_last),
         watered_last = as_date(watered_last),
-        fed_last = ifelse(name %in% fed, today(), fed_last),
+        fed_last = ifelse(name %in% fed, input$date, fed_last),
         fed_last = as_date(fed_last),
       ) 
     
