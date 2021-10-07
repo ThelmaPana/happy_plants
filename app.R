@@ -279,7 +279,7 @@ server <- function(input, output, session) {
     # Update dates of last watering and feeding of selected plants
     plants_raw <- plants_raw %>% 
       mutate(
-        watered_last = ifelse(name %in% watered, input$date, watered_last),
+        watered_last = ifelse(name %in% watered | name %in% fed, input$date, watered_last),
         watered_last = as_date(watered_last),
         fed_last = ifelse(name %in% fed, input$date, fed_last),
         fed_last = as_date(fed_last),
