@@ -1,6 +1,7 @@
 library(shiny)
 library(tidyverse)
 library(lubridate)
+library(DT)
 
 source("gs4_auth.R")
 
@@ -81,89 +82,97 @@ ui <- fluidPage(
     
     mainPanel(
       
-      
-      fluidRow(
-      # Overdue plants
-      h2("Overdue Plants"),
-      column(6,
-             h3("Thursty"),
-             checkboxGroupInput(
-               "to_water_past", 
-               "",
-               choices = plants$name %>% sort()
-             )
-      ),
-      column(6,
-             h3("Hungry"),
-             checkboxGroupInput(
-               "to_feed_past", 
-               "",
-               choices = plants$name
-             )
-      ),
-    ),
+      # Output: Tabset w/ plot, summary, and table ----
+      tabsetPanel(type = "tabs",
+                  tabPanel("Plants", 
+                           fluidRow(
+                             # Overdue plants
+                             h2("Overdue Plants"),
+                             column(6,
+                                    h3("Thursty"),
+                                    checkboxGroupInput(
+                                      "to_water_past", 
+                                      "",
+                                      choices = plants$name %>% sort()
+                                    )
+                             ),
+                             column(6,
+                                    h3("Hungry"),
+                                    checkboxGroupInput(
+                                      "to_feed_past", 
+                                      "",
+                                      choices = plants$name
+                                    )
+                             ),
+                           ),
+                           
+                           br(),
+                           
+                           fluidRow(
+                             # Todays plants
+                             h2("Today’s Plants"),
+                             column(6,
+                                    h3("Thursty"),
+                                    checkboxGroupInput(
+                                      "to_water_today", 
+                                      "",
+                                      choices = plants$name
+                                    )
+                             ),
+                             column(6,
+                                    h3("Hungry"),
+                                    checkboxGroupInput(
+                                      "to_feed_today", 
+                                      "",
+                                      choices = plants$name
+                                    )
+                             ),
+                           ),
+                           
+                           br(),
+                           
+                           fluidRow(
+                             # Coming days plants
+                             h2("Coming soon"),
+                             column(6,
+                                    h3("Thursty"),
+                                    checkboxGroupInput(
+                                      "to_water_future", 
+                                      "",
+                                      choices = plants$name
+                                    )
+                             ),
+                             column(6,
+                                    h3("Hungry"),
+                                    checkboxGroupInput(
+                                      "to_feed_future", 
+                                      "",
+                                      choices = plants$name
+                                    )
+                             ),
+                           ),
+                           
+                           br(),
+                           
+                           actionButton("done", "Done"),
+                           
+                           br(),
+                           br(),
+                           br(),
+                  ),
     
-      br(),
-    
-    fluidRow(
-      # Todays plants
-      h2("Today’s Plants"),
-      column(6,
-             h3("Thursty"),
-             checkboxGroupInput(
-               "to_water_today", 
-               "",
-               choices = plants$name
-             )
-      ),
-      column(6,
-             h3("Hungry"),
-             checkboxGroupInput(
-               "to_feed_today", 
-               "",
-               choices = plants$name
-             )
-      ),
-    ),
-      
-      br(),
-    
-    fluidRow(
-      # Coming days plants
-      h2("Coming soon"),
-      column(6,
-             h3("Thursty"),
-             checkboxGroupInput(
-               "to_water_future", 
-               "",
-               choices = plants$name
-             )
-      ),
-      column(6,
-             h3("Hungry"),
-             checkboxGroupInput(
-               "to_feed_future", 
-               "",
-               choices = plants$name
-             )
-      ),
-    ),
-      
-    br(),
-      
-    actionButton("done", "Done"),
-      
-    br(),
-    br(),
-    br(),
-    )
-  )
+                  tabPanel("Table", DTOutput("table"))
   
-)
+))))
 
 ## Server ----
 server <- function(input, output, session) {
-    
+  
+  # Display table
+  output$table <- renderDT(
+    plants_raw, options = list(scrollX = TRUE)
+  )
+  
   # Select plants based on room, compute next watering and feeding based on season
   df <- reactive(
     if (input$season == "summer"){
