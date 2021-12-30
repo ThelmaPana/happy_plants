@@ -6,7 +6,7 @@ library(DT)
 source("gs4_auth.R")
 
 ## Read data ----
-gs <- "" # your google sheet link goes here
+#gs <- "" # your google sheet link goes here
 
 # Name of columns
 names <- colnames(read_sheet(gs))
@@ -224,7 +224,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_water_past",
       # label = paste("To Water"),
-      choices = setdiff(over_water(), over_food()), # do not show plants to feed
+      choices = union(over_water(), over_food()), # show both plants to feed and to water
       selected = s_w_over
     )
     
@@ -242,7 +242,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_water_today",
       # label = paste("To Water"),
-      choices = setdiff(today_water(), today_food()), # do not show plants to feed
+      choices = union(today_water(), today_food()), # show both plants to feed and to water
       selected = s_w_today
     )
     
@@ -260,7 +260,7 @@ server <- function(input, output, session) {
     updateCheckboxGroupInput(
       session, "to_water_future",
       # label = paste("To Water"),
-      choices = setdiff(future_water(), future_food()), # do not show plants to feed
+      choices = setdiff(future_water(), future_food()), # show both plants to feed and to water
       selected = s_w_future
     )
     
