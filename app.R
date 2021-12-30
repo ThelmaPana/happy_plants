@@ -52,7 +52,7 @@ season_dates <-c( # end date of seasons in julian day
   )
 
 # find which season matches today in julian day
-season_pred <- season_names[max(which(yday(today()) > season_dates)) + 1]
+season_pred <- season_names[(max(which(yday(today()) > season_dates)) + 1) %% 4]
 
 
 ## UI ----
