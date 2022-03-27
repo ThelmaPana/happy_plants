@@ -6,7 +6,8 @@ library(DT)
 source("gs4_auth.R")
 
 ## Read data ----
-#gs <- "" # your google sheet link goes here
+gs <- "" # your google sheet link goes here
+
 
 # Name of columns
 names <- colnames(read_sheet(gs))
@@ -48,11 +49,12 @@ season_dates <-c( # end date of seasons in julian day
   yday(ymd('2020-03-20')), # end of winter
   yday(ymd('2020-06-21')), # end of spring
   yday(ymd('2020-09-22')), # end of summer
-  yday(ymd('2020-12-21'))  # end of automn
+  yday(ymd('2020-12-21')),  # end of autumn
+  yday(ymd('2020-12-31'))  # end of autumn
   )
 
 # find which season matches today in julian day
-season_pred <- season_names[(max(which(yday(today()) > season_dates)) + 1) %% 4]
+season_pred <- season_names[min(which(yday(today()) <= season_dates)) %% 4]
 
 
 ## UI ----
